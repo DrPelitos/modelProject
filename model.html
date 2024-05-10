@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Earth project</title>
+        <style>
+            #wrapper {
+                display: flex;
+                justify-content: center;
+                margin-left:auto;
+                margin-right:auto;
+            }
+            #canvas {
+                border-style:solid;
+                display: block;
+            }
+            #text {
+                padding: 20px;
+                border-style: solid;
+                width: 600px;
+                font-family: sans-serif;
+                font-size: 25px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="text"><h1>Solar System Model</h1>In my model of the solar system, the earth rotates around the sun, and the moon rotates around the earth. They orbit each other because gravity pulls them towards each other, but their inertia pushes them outwards. This causes a stable cycle where one body revolves around another. Revolution is when planets revolve around each other, and rotation is planets spinning around their own axis. Seasons are caused by revolution, while day and night are caused by rotation. A weakness of the model is that it does not show rotation or  the earth's tilted axis.<br><br>*Not to scale</div>
+            <canvas id="canvas" width=600 height=600>
+            </canvas>
+        </div>
+    </body>
+    <script>
+        //Canvas code
+        const canvas = document.getElementById("canvas");
+        const ca = canvas.getContext("2d");
+        
+        sun = {
+            x: canvas.width/2,
+            y: canvas.height/2,
+            r: 50
+        }
+        
+        earth = {
+            x: 500,
+            y: canvas.height/2,
+            r: 20,
+            a: 0
+        }
+        
+        moon = {
+            x: 550,
+            y: canvas.height/2,
+            r: 10,
+            a: 0
+        }
+        
+        data = {
+            year: 0,
+            day: 0
+        }
+        
+        stars = []
+        for(let i=0;i<50;i++){
+            stars.push({
+                x: Math.random()*canvas.width,
+                y: Math.random()*canvas.height,
+                r: Math.random()*2+0.5
+            })
+        }
+        
+        function update(){
+            //data
+            data.day += 0.29
+            data.year = data.day / 360
+            
+            //calculate earth
+            earth.a += 0.005
+            earth.x = sun.x+200*Math.cos(earth.a)
+            earth.y = sun.y+200*Math.sin(earth.a)
+            
+            //calculate moon
+            moon.a += 0.065
+            moon.x = earth.x+40*Math.cos(moon.a)
+            moon.y = earth.y+40*Math.sin(moon.a)
+            
+            //clear canvas
+            ca.fillStyle = "black"
+            ca.fillRect(0,0,canvas.width,canvas.height)
+            
+            //stars
+            ca.fillStyle = "white"
+            stars.forEach((star)=>{
+                ca.beginPath();
+                ca.arc(star.x, star.y, star.r,0,Math.PI*2);
+                ca.fill();
+            })
+            //moon
+            ca.beginPath();
+            ca.arc(moon.x, moon.y, moon.r, 0, 2*Math.PI);
+            ca.fillStyle = "gray";
+            ca.fill();
+            
+            //earth
+            ca.beginPath();
+            ca.fillStyle = "blue";
+            ca.arc(earth.x, earth.y, earth.r, 0, 2*Math.PI);
+            ca.fill();
+            
+            //sun
+            ca.beginPath();
+            ca.arc(sun.x, sun.y, sun.r, 0, 2*Math.PI);
+            ca.fillStyle = "yellow";
+            ca.fill();
+            
+            //counters
+            ca.beginPath();
+            ca.fillStyle = "white";
+            ca.font = "20px sans-serif";
+            ca.fillText("Year: "+Math.floor(data.year),20,canvas.height-40)
+            ca.fillText("Day: "+Math.floor(data.day),20,canvas.height-20)
+            
+            requestAnimationFrame(update);
+        }
+        update()
+    </script>
+</html>
+
+
